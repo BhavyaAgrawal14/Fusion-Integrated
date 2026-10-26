@@ -162,6 +162,69 @@ paths:
               schema:
                 $ref: '#/components/schemas/LeaveApplication'
           description: ''
+  /api/v1/elm/applications/{id}/cancel/:
+    post:
+      operationId: v1_elm_applications_cancel_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LeaveCancelRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LeaveCancelRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LeaveCancelRequest'
+      security:
+      - iamSession: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LeaveCancelRequest'
+          description: ''
+  /api/v1/elm/applications/{id}/substitute/:
+    post:
+      operationId: v1_elm_applications_substitute_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - v1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplacementSubstitute'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ReplacementSubstitute'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ReplacementSubstitute'
+        required: true
+      security:
+      - iamSession: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplacementSubstitute'
+          description: ''
   /api/v1/elm/applications/{id}/withdraw/:
     post:
       operationId: v1_elm_applications_withdraw_create
@@ -2262,11 +2325,13 @@ components:
       - approve
       - reject
       - recommend
+      - not_recommend
       type: string
       description: |-
         * `approve` - approve
         * `reject` - reject
         * `recommend` - recommend
+        * `not_recommend` - not_recommend
     ApprovalStatusEnum:
       enum:
       - pending
@@ -3089,6 +3154,7 @@ components:
       - approved
       - rejected
       - withdrawn
+      - cancellation_requested
       - cancelled
       type: string
       description: |-
@@ -3100,6 +3166,7 @@ components:
         * `approved` - Approved
         * `rejected` - Rejected
         * `withdrawn` - Withdrawn
+        * `cancellation_requested` - Cancellation Requested
         * `cancelled` - Cancelled
     LeaveBalance:
       type: object
@@ -3138,6 +3205,12 @@ components:
       - leave_type
       - updated_at
       - user_id
+    LeaveCancelRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          default: ''
     LeaveTypeEnum:
       enum:
       - CL
@@ -4021,6 +4094,13 @@ components:
       - message
       - reason
       - route
+    ReplacementSubstitute:
+      type: object
+      properties:
+        substitute_id:
+          type: integer
+      required:
+      - substitute_id
     RoundOutcome:
       type: object
       properties:

@@ -1,6 +1,6 @@
 import { Badge, Container, Paper, Stack, Table, Text, Title } from "@mantine/core";
 import { useLeaveBalances } from "../api/hooks";
-import { LeaveBalance } from "../api/types";
+import type { LeaveBalance } from "../api/types";
 
 export default function BalancesPage() {
   const { data: balances = [], isLoading } = useLeaveBalances();

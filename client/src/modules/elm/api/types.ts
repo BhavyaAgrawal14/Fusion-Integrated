@@ -9,6 +9,7 @@ export type LeaveStatus =
   | "approved"
   | "rejected"
   | "withdrawn"
+  | "cancellation_requested"
   | "cancelled";
 
 export type SubstituteStatus = "pending" | "accepted" | "declined";

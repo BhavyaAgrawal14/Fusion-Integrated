@@ -2,16 +2,23 @@
 
 Every getter must be plural per Fusion integration conventions.
 """
-from typing import Sequence
+from collections.abc import Sequence
+
 from .models import LeaveApplication, LeaveBalance
 
 
 def get_active_leave_counts(user_ids: Sequence[int]) -> dict[int, int]:
     """Return count of active leaves for each user in user_ids."""
-    counts = {uid: 0 for uid in user_ids}
+    counts = dict.fromkeys(user_ids, 0)
     qs = LeaveApplication.objects.filter(
         applicant_id__in=user_ids,
-        status__in=["submitted", "pending_substitute", "pending_unit_head", "pending_sanction", "approved"],
+        status__in=[
+            "submitted",
+            "pending_substitute",
+            "pending_unit_head",
+            "pending_sanction",
+            "approved",
+        ],
     )
     for app in qs:
         counts[app.applicant_id] = counts.get(app.applicant_id, 0) + 1

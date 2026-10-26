@@ -1,11 +1,12 @@
 import { Badge, Button, Container, Group, Paper, Stack, Table, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useMyLeaves, useWithdrawLeave } from "../api/hooks";
-import { LeaveApplication } from "../api/types";
+import { useCancelLeave, useMyLeaves, useWithdrawLeave } from "../api/hooks";
+import type { LeaveApplication } from "../api/types";
 
 export default function MyLeavesPage() {
   const { data: leaves = [], isLoading } = useMyLeaves();
   const withdrawMutation = useWithdrawLeave();
+  const cancelMutation = useCancelLeave();
 
   const handleWithdraw = (id: number) => {
     withdrawMutation.mutate(id, {
@@ -16,14 +17,36 @@ export default function MyLeavesPage() {
           color: "green",
         });
       },
-      onError: () => {
+      onError: (err: any) => {
         notifications.show({
           title: "Error",
-          message: "Failed to withdraw leave application.",
+          message: err?.response?.data?.error || "Failed to withdraw leave application.",
           color: "red",
         });
       },
     });
+  };
+
+  const handleCancelRequest = (id: number) => {
+    cancelMutation.mutate(
+      { id, reason: "Requested cancellation before leave start." },
+      {
+        onSuccess: () => {
+          notifications.show({
+            title: "Success",
+            message: "Leave cancellation requested successfully.",
+            color: "green",
+          });
+        },
+        onError: (err: any) => {
+          notifications.show({
+            title: "Error",
+            message: err?.response?.data?.error || "Failed to request leave cancellation.",
+            color: "red",
+          });
+        },
+      }
+    );
   };
 
   return (
@@ -71,6 +94,10 @@ export default function MyLeavesPage() {
                             ? "red"
                             : app.status === "withdrawn"
                             ? "gray"
+                            : app.status === "cancellation_requested"
+                            ? "orange"
+                            : app.status === "cancelled"
+                            ? "dark"
                             : "blue"
                         }
                       >
@@ -88,6 +115,17 @@ export default function MyLeavesPage() {
                           loading={withdrawMutation.isPending}
                         >
                           Withdraw
+                        </Button>
+                      )}
+                      {app.status === "approved" && (
+                        <Button
+                          size="xs"
+                          variant="outline"
+                          color="orange"
+                          onClick={() => handleCancelRequest(app.id)}
+                          loading={cancelMutation.isPending}
+                        >
+                          Cancel Leave
                         </Button>
                       )}
                     </Table.Td>

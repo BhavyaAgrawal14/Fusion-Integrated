@@ -16,7 +16,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
 import { useApplyLeave } from "../api/hooks";
-import { LeaveType } from "../api/types";
+import type { LeaveType } from "../api/types";
 
 export default function ApplyLeavePage() {
   const navigate = useNavigate();

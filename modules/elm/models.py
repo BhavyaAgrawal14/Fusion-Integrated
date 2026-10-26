@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+
 from core.db.mixins import TimeStampedModel
 
 
@@ -21,6 +22,7 @@ class LeaveStatus(models.TextChoices):
     APPROVED = "approved", _("Approved")
     REJECTED = "rejected", _("Rejected")
     WITHDRAWN = "withdrawn", _("Withdrawn")
+    CANCELLATION_REQUESTED = "cancellation_requested", _("Cancellation Requested")
     CANCELLED = "cancelled", _("Cancelled")
 
 
@@ -93,7 +95,10 @@ class LeaveApplication(TimeStampedModel):
         ]
 
     def __str__(self) -> str:
-        return f"leave_app#{self.pk} applicant={self.applicant_id} {self.leave_type} ({self.status})"
+        return (
+            f"leave_app#{self.pk} applicant={self.applicant_id} "
+            f"{self.leave_type} ({self.status})"
+        )
 
 
 class LeaveAction(models.Model):

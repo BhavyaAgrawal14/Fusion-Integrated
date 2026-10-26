@@ -1,9 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { http } from "../../../lib/http";
 import type {
-  LeaveBalance,
-  LeaveApplication,
   ApplyLeavePayload,
+  LeaveApplication,
+  LeaveBalance,
 } from "./types";
 
 const KEY = "elm";
@@ -53,6 +53,38 @@ export function useWithdrawLeave() {
   return useMutation({
     mutationFn: async (id: number) => {
       const res = await http.post<LeaveApplication>(`/api/v1/elm/applications/${id}/withdraw/`);
+      return res.data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [KEY] });
+    },
+  });
+}
+
+export function useCancelLeave() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, reason }: { id: number; reason?: string }) => {
+      const res = await http.post<LeaveApplication>(
+        `/api/v1/elm/applications/${id}/cancel/`,
+        { reason }
+      );
+      return res.data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: [KEY] });
+    },
+  });
+}
+
+export function useReplaceSubstitute() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, substitute_id }: { id: number; substitute_id: number }) => {
+      const res = await http.post<LeaveApplication>(
+        `/api/v1/elm/applications/${id}/substitute/`,
+        { substitute_id }
+      );
       return res.data;
     },
     onSuccess: () => {

@@ -1,7 +1,7 @@
 import { Badge, Button, Container, Group, Paper, Stack, Table, Text, Title } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useSubstituteRequests, useSubstituteAction } from "../api/hooks";
-import { LeaveApplication } from "../api/types";
+import { useSubstituteAction, useSubstituteRequests } from "../api/hooks";
+import type { LeaveApplication } from "../api/types";
 
 export default function SubstitutePage() {
   const { data: requests = [], isLoading } = useSubstituteRequests();
